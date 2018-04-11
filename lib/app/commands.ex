@@ -4,8 +4,10 @@ defmodule Telegrambot.Commands do
 
   command ["help"], "도움말" do
     Enum.reduce(commands(), "", fn(x, acc) -> 
-      acc <> "/" <> x.command <> " - " <> x.description <> "\n"
+      "/" <> x.command <> " - " <> x.description <> "\n" <> acc
     end)
     |> send_message
   end
+
+  command ["anitable"], "애니편성표", Telegrambot.Anitable
 end

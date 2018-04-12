@@ -15,7 +15,7 @@ defmodule Telegrambot.Router do
         rescue
           err in FunctionClauseError ->
             Logger.log :warn, """
-            매칭오류: #{Jason.encode! message}
+            매칭오류: #{ message |> inspect}
             """
         end
       end
@@ -46,6 +46,14 @@ defmodule Telegrambot.Router do
       def do_match_message(%{
         "message" => %{
           "text" => "/" <> unquote(command) <> " " <> var!(msg_arg)
+        }
+      } = var!(request_data)) do
+        handle_message(unquote(handler), var!(request_data), var!(msg_arg))
+      end
+      def do_match_message(%{
+        "message" => %{
+          "reply_to_message" => %{"text" => "/" <> unquote(command) <> _},
+          "location" => var!(msg_arg)
         }
       } = var!(request_data)) do
         handle_message(unquote(handler), var!(request_data), var!(msg_arg))
@@ -111,6 +119,7 @@ defmodule Telegrambot.Router do
       apply module, :command, [message]
     end
   end
+  def handle_message(_, _), do: nil
 
   def handle_message(module, message, arg)
   when is_atom(module) do
@@ -119,5 +128,4 @@ defmodule Telegrambot.Router do
     end
   end
 
-  def handle_message(_, _), do: nil
 end

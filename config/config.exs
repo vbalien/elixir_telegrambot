@@ -12,7 +12,8 @@ use Mix.Config
 #
 config :telegrambot,
   token: System.get_env("TOKEN"),
-  botname: "jitchan_bot"
+  botname: "jitchan_bot",
+  weather_key: System.get_env("WEATHER_KEY")
 #
 # and access this configuration in your application as:
 #

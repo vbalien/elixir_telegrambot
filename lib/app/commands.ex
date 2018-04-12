@@ -10,4 +10,5 @@ defmodule Telegrambot.Commands do
   end
 
   command ["anitable"], "애니편성표", Telegrambot.Anitable
+  command ["weather"], "날씨정보", Telegrambot.Weather
 end

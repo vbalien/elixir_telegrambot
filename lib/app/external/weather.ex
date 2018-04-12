@@ -25,10 +25,14 @@ defmodule Telegrambot.Weather do
     case msg_arg do
       nil ->
         send_message("""
-        /weather
+        /weather 날씨정보
         이 메시지 답글로 위치를 보내주세요.
         """)
-      _ ->
+
+      %{"latitude" => _, "longitude" => _} ->
+        chat_id = request_data["message"]["reply_to_message"]["chat"]["id"]
+        message_id = request_data["message"]["reply_to_message"]["message_id"]
+        delete_message(chat_id, message_id)
         WeatherApi.info(msg_arg) |> get_weather_info |> send_message
     end
   end

@@ -3,5 +3,5 @@
 
 ## Usage
 ```bash
-  $ TOKEN=your_token mix run --no-halt
+  $ TOKEN=your_token WEATHER_KEY=weather_api_key mix run --no-halt
 ```

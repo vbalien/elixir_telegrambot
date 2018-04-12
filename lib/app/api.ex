@@ -35,6 +35,15 @@ defmodule Telegrambot.Api do
     end
   end
 
+  defmacro delete_message(chat_id, message_id) do
+    quote do
+      post("/deleteMessage", %{
+        chat_id: unquote(chat_id),
+        message_id: unquote(message_id)
+      })
+    end
+  end
+
   defmacro send_data(message, reply \\ %{}) do
     quote bind_quoted: [message: message, reply: reply] do
       if is_callback?() do

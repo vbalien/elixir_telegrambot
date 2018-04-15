@@ -24,7 +24,7 @@ defmodule Telegrambot.Anitable do
   use Telegrambot.Api
 
   def command(request_data, msg_arg \\ nil) do
-    now_week = DateTime.utc_now() 
+    now_week = Timex.local() 
            |> DateTime.to_date() 
            |> Date.day_of_week()
            |> rem(7)
@@ -40,7 +40,7 @@ defmodule Telegrambot.Anitable do
       acc <> time_format(x["t"]) <> " │ " <> subject_format(x["s"]) <> "\n"
     end)
     |> send_data(%{
-      inline_keyboard: gen_keyboard(now_week, cur_week)
+      inline_keyboard: gen_keyboard(cur_week)
     })
   end 
 
@@ -59,30 +59,23 @@ defmodule Telegrambot.Anitable do
     end
   end
 
-  def gen_keyboard(now_week, cur_week) do
+  def gen_keyboard(cur_week) do
+    cur_week = @weekdata |> Enum.at(cur_week)
     [
-      [
-        %{
-          text: "전일(#{@weekdata |> Enum.at(cur_week - 1 |> rem(7))})",
-          callback_data: "/anitable " <> (@weekdata |> Enum.at(cur_week - 1 |> rem(7)))
-        },
-        %{
-          text: "익일(#{@weekdata |> Enum.at(cur_week + 1 |> rem(7))})",
-          callback_data: "/anitable " <> (@weekdata |> Enum.at(cur_week + 1 |> rem(7)))
-        }
-      ],
       Enum.map(@weekdata, fn(x) ->
-        %{
-          text: x,
-          callback_data: "/anitable " <> x
-        }
-      end),
-      [
-        %{
-          text: "금일(#{@weekdata |> Enum.at(now_week)})",
-          callback_data: "/anitable " <> (@weekdata |> Enum.at(now_week))
-        }
-      ]
+        case x do
+          ^cur_week ->
+            %{
+              text: "*" <> x,
+              callback_data: "/anitable " <> x
+            }
+          _ ->
+            %{
+              text: x,
+              callback_data: "/anitable " <> x
+            }
+        end
+      end)
     ]
   end
 

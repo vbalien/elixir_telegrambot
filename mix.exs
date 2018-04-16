@@ -26,7 +26,8 @@ defmodule Telegrambot.MixProject do
       {:plug, "~> 1.3.4"},
       {:jason, "~> 1.0"},
       {:tesla, "1.0.0-beta.1"},
-      {:timex, "~> 3.1"}
+      {:timex, "~> 3.1"},
+      {:rethinkdb, "~> 0.4.0"}
     ]
   end
 end

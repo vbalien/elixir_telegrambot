@@ -105,7 +105,7 @@ defmodule Telegrambot.Memo do
       "list" -> :list
       _ ->
         arg_codes = String.codepoints(arg)
-        case Enum.find_index(arg_codes, fn(x) -> x == " " end) do
+        case Enum.find_index(arg_codes, fn(x) -> Enum.member?([" ", "\n"], x) end) do
           nil -> arg
           pos ->
             {

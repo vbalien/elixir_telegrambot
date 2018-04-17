@@ -110,7 +110,10 @@ defmodule Telegrambot.Anitable do
     {msg, keyboard, type} =
       case parse(msg_arg) do
         {:table, cur_week} -> do_table(cur_week)
-        {:subtitle, cur_week} -> do_subtitle(cur_week, request_data)
+        {:subtitle, cur_week} ->
+          {chat_id, message_id} = get_chat_id()
+          delete_message(chat_id, message_id)
+          do_subtitle(cur_week, request_data)
         {:subdown, sub_id, ani_name} -> do_subdown(sub_id, ani_name)
       end
 

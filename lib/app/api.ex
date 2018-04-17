@@ -15,11 +15,38 @@ defmodule Telegrambot.Api do
 
   defmacro send_message(message, reply \\ %{} |> Macro.escape) do
     quote bind_quoted: [message: message, reply: reply] do
+      chat_id = case get_chat_id() do
+        {chat_id, _} -> chat_id
+        chat_id -> chat_id
+      end
+
       post("/sendMessage", %{
-        chat_id: get_chat_id(),
+        chat_id: chat_id,
+        parse_mode: "Markdown",
         text: message,
         reply_markup: reply
       })
+    end
+  end
+
+  defmacro send_document(document, caption, reply \\ %{} |> Macro.escape) do
+    quote bind_quoted: [document: document, reply: reply, caption: caption] do
+      chat_id = case get_chat_id() do
+        {chat_id, _} -> chat_id
+        chat_id -> chat_id
+      end
+
+      alias Tesla.Multipart
+      mp = Multipart.new
+           |> Multipart.add_content_type_param("charset=utf-8")
+           |> Multipart.add_field("reply_markup", Jason.encode!(reply))
+           |> Multipart.add_file_content(document.data, document.name, name: "document")
+
+      post("/sendDocument", mp, query: [
+        chat_id: chat_id,
+        parse_mode: "Markdown",
+        caption: caption
+      ])
     end
   end
 

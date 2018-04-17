@@ -50,6 +50,15 @@ defmodule Telegrambot.Router do
       } = var!(request_data)) do
         handle_message(unquote(handler), var!(request_data), var!(msg_arg))
       end
+
+      def do_match_message(%{
+        "message" => %{
+          "reply_to_message" =>
+            %{"text" => "/" <> unquote(command) <> var!(msg_arg)}
+        }
+      } = var!(request_data)) do
+        handle_message(unquote(handler), var!(request_data), var!(msg_arg))
+      end
       def do_match_message(%{
         "message" => %{
           "reply_to_message" => %{"text" => "/" <> unquote(command) <> _},

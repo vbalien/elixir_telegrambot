@@ -60,6 +60,22 @@ defmodule Telegrambot.Memo do
 
   def command(request_data, msg_arg \\ nil) do
     user = request_data["message"]["from"]["username"]
+    if request_data["message"] |> Map.has_key?("reply_to_message") do
+      do_reply(msg_arg, user, request_data["message"]["text"])
+    else
+      do_normal(msg_arg, user)
+    end
+    |> send_message
+  end
+
+  def do_reply(msg_arg, user, data) do
+    {name, _} = parse(msg_arg)
+    value = get_memo(name, user) <> "\n" <> data
+    save_memo(name, value, user)
+    "저장하였습니다."
+  end
+
+  def do_normal(msg_arg, user) do
     case parse(msg_arg) do
       nil ->
         """
@@ -70,13 +86,13 @@ defmodule Telegrambot.Memo do
         /memo del - 메모 제거
         /memo [제목; 띄어쓰기x] [내용] - 메모 저장
         /memo [제목; 띄어쓰기x] - 메모 가져오기
-        """ |> send_message
+        """
 
       :list ->
         """
         메모 리스트
         #{list_memo(user)}
-        """ |> send_message
+        """
 
       {name, value} ->
         case name do
@@ -85,15 +101,20 @@ defmodule Telegrambot.Memo do
               "제거하였습니다."
             else
               "오류"
-            end |> send_message
+            end
 
           _ ->
             save_memo(name, value, user)
-            "저장하였습니다." |> send_message
+            "저장하였습니다."
         end
 
       name ->
-        get_memo(name, user) |> send_message
+        """
+        /memo #{name}
+        답글로 끝에 내용을 추가할 수 있습니다.
+        ----------------------------
+        #{get_memo(name, user)}
+        """
     end
   end
 

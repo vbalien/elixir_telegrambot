@@ -9,7 +9,7 @@ defmodule Telegrambot.Commands do
     |> send_message
   end
 
-  command ["anitable"], "애니편성표", Telegrambot.Anitable
+  command ["anitable"], "애니편성표, 자막받기", Telegrambot.Anitable
   command ["weather"], "날씨정보", Telegrambot.Weather
   command ["memo"], "메모", Telegrambot.Memo
 end
